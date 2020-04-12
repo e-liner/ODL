@@ -1,11 +1,12 @@
 import os, sys, getopt 
 import yaml
-import cPickle
+import pickle
 import numpy as np
 import keras
 import keras.callbacks
+import csv
 from keras.datasets import mnist
-from keras.utils.visualize_util import plot
+from keras.utils.vis_utils import plot_model
 from keras.models import Sequential, Model
 from keras.optimizers import SGD, Adam, RMSprop
 from model import build_model, MyCallback
@@ -64,11 +65,11 @@ def main(arg, idx=0):
 
     if os.path.exists(configfile):
         f = open(configfile)
-        user_config = yaml.load(f.read())
+        user_config = yaml.load(f.read(), Loader=yaml.FullLoader)
         config.update(user_config)
     
     print("Printing configuration:")
-    for key,value in config.iteritems():
+    for key,value in config.items():
         print("  ",key,": ",value)
 
     (X_train, Y_train, X_test, Y_test, nb_classes) = load(config['data'])
@@ -85,25 +86,55 @@ def main(arg, idx=0):
         out_name_loss = [s + '_loss' for s in out_name]
 
     model.summary()
-    
     #plot(model, to_file = 'model.png')
     
     optim = eval(config['optim'])(lr = config['learning_rate'])
     in_dict, out_dict = build_data_dict(in_name, out_name, X_train, Y_train)
     in_val, out_val = build_data_dict(in_name, out_name, X_test, Y_test)
-    loss_dict = dict((k, 'categorical_crossentropy') for k in out_name) 
-  
+    loss_dict = dict((k, 'categorical_crossentropy') for k in out_name)
+
     loss_weights = build_loss_weight(config)
-    my_callback = MyCallback(loss_weights, names = out_name_loss, hedge = config['hedge'], log_name = config['log'])
-    #csv  = CSVLogger(config['log'])
-    model.compile(optimizer = optim, loss = loss_dict, hedge = config['hedge'],loss_weights = loss_weights, metrics = ['accuracy'])
-    model.fit(in_dict, out_dict, nb_epoch = config['nb_epoch'], batch_size = config['batch_size'], callbacks=[my_callback])
-    cumLoss = np.cumsum(my_callback.acc)
-    indexOfLoss = np.arange(len(cumLoss))+1
-    cumAverageLoss = cumLoss/indexOfLoss
-    filename = (config['log'] + '_' + str(idx) + '.acc')
-    np.savetxt(filename, cumAverageLoss, delimiter=',')
+    my_callback = MyCallback(loss_weights, names = out_name_loss, hedge = config['hedge'], log_name = config['log'], acc_output_num = config['n_layers'])
+
+    model.compile(optimizer = optim, loss = loss_dict, loss_weights = loss_weights, metrics = ['acc'])
+    model.fit(in_dict, out_dict, epochs = config['nb_epoch'], batch_size = config['batch_size'], callbacks=[my_callback]) #callbacks=[csv]) #
     
+    #cumLoss = np.cumsum(my_callback.acc)
+    #indexOfLoss = np.arange(len(cumLoss))+1
+    #cumAverageLoss = cumLoss/indexOfLoss
+
+    #filename = (config['log'] + '_' + str(idx) + '.acc')
+    #np.savetxt(filename, cumAverageLoss, delimiter=',')
+
+    out_num = config['n_layers']
+    csv_file = "model_acc.csv"
+
+    # Save dictionary to CSV file
+    for i in range(0, out_num):
+        acc_name = 'out' + str(i) + '_acc'
+
+    data_len = len(my_callback.acc_dict['out0_acc'])
+    try:
+        with open(csv_file, 'w', newline='') as f:
+            dict_keys = list(my_callback.acc_dict.keys())
+            dict_keys.append('cumulative_acc')
+            w = csv.DictWriter(f, dict_keys)
+            w.writeheader()
+
+            for i in range(0, data_len):
+                data_list = dict()
+                acc_sum = 0.0
+                for j in range(0, out_num):
+                    acc_name = 'out' + str(j) + '_acc'
+                    data_list[acc_name] = my_callback.acc_dict[acc_name][i]
+                    acc_sum += my_callback.acc_dict[acc_name][i]
+                data_list['cumulative_acc'] = (acc_sum / out_num)
+
+                w.writerow(data_list)
+
+    except IOError:
+        print("I/O error")
+
     return my_callback
 if __name__ == '__main__':
     #for i in range(5):

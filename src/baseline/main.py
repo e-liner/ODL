@@ -1,13 +1,13 @@
 import os, sys, getopt 
 import yaml
-import cPickle
+import pickle
 
 import numpy as np
 
 import keras
 import keras.callbacks
 from keras.datasets import mnist
-from keras.utils.visualize_util import plot
+from keras.utils.vis_utils import plot_model
 from keras.models import Sequential, Model
 from keras.optimizers import SGD, Adam, RMSprop
 from model import build_model, MyCallback
@@ -73,7 +73,7 @@ def main(arg, idx=0):
         config.update(user_config)
     
     print("Printing configuration:")
-    for key,value in config.iteritems():
+    for key,value in config.items():
         print("  ",key,": ",value)
 
     (X_train, Y_train, X_test, Y_test, nb_classes) = load(config['data'])

@@ -15,7 +15,7 @@ def get_data(config):
         config['input_size'] = (28,)
     elif config['data'] == 'susy':
         config['input_size'] = (18,)
-    elif config['data'] in ['cd6','cd7']:
+    elif config['data'] in ['cd6','cd7', 'cd1', 'cd2']:
         config['input_size'] = (50,)
     elif config['data'] in ['cd3','cd4']:
         config['input_size'] = (25,)
@@ -55,7 +55,7 @@ def build_model(config):
             outs[j] = Dense(config['output_size'], activation = 'softmax', name = outs[j])(layer)
     if config['hedge'] == False:
         outs = Dense(config['output_size'], activation = 'softmax', name = outs)(layer)
-    model = Model(input = inputs , output = outs)
+    model = Model(inputs = inputs , outputs = outs)
 
     return (model, in_name, out_name)
 
@@ -67,7 +67,7 @@ def list_convert(x):
     return l
 # add self.masks, self.weighted_losses
 class MyCallback(Callback):
-    def __init__(self,w,  beta = 0.99,  names = [], hedge = False, log_name = 'exp'):
+    def __init__(self,w,  beta = 0.99,  names = [], hedge = True, log_name = 'exp', acc_output_num = 20):
         self.weights = w
         self.beta = beta
         self.names = names
@@ -77,10 +77,21 @@ class MyCallback(Callback):
         self.logs = dict()
         self.log_name = log_name + '.log'
         self.acc = []
+        self.acc_dict = dict()
+        self.acc_output_num = acc_output_num
     def on_train_begin(self,logs = {}):
         self.logs['weights'] = []
+
+        for i in range(0, self.acc_output_num):
+            acc_name = 'out' + str(i) + '_acc'
+            self.acc_dict[acc_name] = []
+    def save_acc(self, logs):
+        for i in range(0, self.acc_output_num):
+            acc_name = 'out' + str(i) + '_acc'
+            self.acc_dict[acc_name].append(logs.get(acc_name))
     def on_batch_end(self, batch, logs = {}):
         self.l.append(logs.get('loss'))
+        self.save_acc(logs)
         if self.hedge:
             self.acc.append(logs.get('weighted_acc'))
         else:
