@@ -20,8 +20,8 @@ def convert_npz_to_mat(npz_file, mat_file):
 
     new_data = dict()
 
-    #random.shuffle(data_save)
-    #random.shuffle(label_save)
+    random.shuffle(data_save)
+    random.shuffle(label_save)
 
     # todo - shuffle this.
     new_data['X_train'] = data_save[:train_length]

@@ -108,27 +108,54 @@ def main(arg, idx=0):
 
     out_num = config['n_layers']
     csv_file = "model_acc.csv"
+    print("Saving results to CSV file...")
 
     # Save dictionary to CSV file
     for i in range(0, out_num):
         acc_name = 'out' + str(i) + '_acc'
+        loss_name = 'out' + str(i) + '_loss'
 
-    data_len = len(my_callback.acc_dict['out0_acc'])
+    data_len = len(my_callback.data_dict['out0_acc'])
     try:
         with open(csv_file, 'w', newline='') as f:
-            dict_keys = list(my_callback.acc_dict.keys())
+            dict_keys = list(my_callback.data_dict.keys())
             dict_keys.append('cumulative_acc')
+            dict_keys.append('max_acc')
+            dict_keys.append('max_acc_idx')
+            dict_keys.append('min_loss')
+            dict_keys.append('min_loss_idx')
             w = csv.DictWriter(f, dict_keys)
             w.writeheader()
 
+
+            print(my_callback.data_dict.keys())
             for i in range(0, data_len):
                 data_list = dict()
                 acc_sum = 0.0
+                max_acc = my_callback.data_dict[acc_name][0]
+                max_acc_idx = 0
+                min_loss = my_callback.data_dict[loss_name][0]
+                min_loss_idx = 0
                 for j in range(0, out_num):
                     acc_name = 'out' + str(j) + '_acc'
-                    data_list[acc_name] = my_callback.acc_dict[acc_name][i]
-                    acc_sum += my_callback.acc_dict[acc_name][i]
+                    loss_name = 'out' + str(j) + '_loss'
+                    data_list[acc_name] = my_callback.data_dict[acc_name][i]
+                    data_list[loss_name] = my_callback.data_dict[loss_name][i]
+                    #if type(my_callback.data_dict[acc_name][i]) == type(0.0): #eliner fixme.
+                    acc_sum += my_callback.data_dict[acc_name][i]                    
+
+                    if data_list[acc_name] > max_acc:
+                        max_acc = data_list[acc_name]
+                        max_acc_idx = j
+                    if data_list[loss_name] < min_loss:
+                        min_loss = data_list[loss_name]
+                        min_loss_idx = j
+
                 data_list['cumulative_acc'] = (acc_sum / out_num)
+                data_list['max_acc'] = max_acc
+                data_list['max_acc_idx'] = max_acc_idx
+                data_list['min_loss'] = min_loss
+                data_list['min_loss_idx'] = min_loss_idx
 
                 w.writerow(data_list)
 

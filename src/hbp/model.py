@@ -77,21 +77,25 @@ class MyCallback(Callback):
         self.logs = dict()
         self.log_name = log_name + '.log'
         self.acc = []
-        self.acc_dict = dict()
+        self.data_dict = dict()
         self.acc_output_num = acc_output_num
     def on_train_begin(self,logs = {}):
         self.logs['weights'] = []
 
         for i in range(0, self.acc_output_num):
             acc_name = 'out' + str(i) + '_acc'
-            self.acc_dict[acc_name] = []
-    def save_acc(self, logs):
+            loss_name = 'out' + str(i) + '_loss'
+            self.data_dict[acc_name] = []
+            self.data_dict[loss_name] = []
+    def save_acc_and_loss(self, logs):
         for i in range(0, self.acc_output_num):
             acc_name = 'out' + str(i) + '_acc'
-            self.acc_dict[acc_name].append(logs.get(acc_name))
+            loss_name = 'out' + str(i) + '_loss'
+            self.data_dict[acc_name].append(logs.get(acc_name))
+            self.data_dict[loss_name].append(logs.get(loss_name))
     def on_batch_end(self, batch, logs = {}):
         self.l.append(logs.get('loss'))
-        self.save_acc(logs)
+        self.save_acc_and_loss(logs)
         if self.hedge:
             self.acc.append(logs.get('weighted_acc'))
         else:
@@ -129,6 +133,8 @@ class MyCallback(Callback):
             self.weights = alpha 
     def on_batch_begin(self, epoch, logs={}):
         self.model.holder = (self.weights)
+    def on_epoch_end(self, epoch, logs={}):
+        self.save_acc_and_loss(logs)
     '''
     def on_train_end(self, logs = {}):
         with open(self.log_name, 'w') as f:
