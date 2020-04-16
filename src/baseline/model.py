@@ -16,7 +16,7 @@ def get_data(config):
     elif config['data'] == 'susy':
         config['input_size'] = (18,)
         config['output_size'] = 2
-    elif config['data'] == 'cd6' or config['data'] == 'cd7':
+    elif config['data'] == 'cd6' or config['data'] == 'cd7' or config['data'] == 'cd1' or config['data'] == 'cd2':
         config['input_size'] = (50,)
     elif config['data'] == 'cd3' or config['data'] == 'cd4':
         config['input_size'] = (25,)
@@ -74,10 +74,15 @@ class MyCallback(Callback):
         self.hedge = hedge
         self.acc = []
         self.log_name = log_name
+        self.data_dict = dict()
+        self.data_dict['acc'] = []
+        self.data_dict['loss'] = []
     def on_batch_end(self, batch, logs = {}):
         self.l.append(logs.get('loss'))
         losses = [logs[name] for name in self.names]
         self.acc.append(logs.get('acc'))
+        self.data_dict['loss'].append(logs.get('loss'))
+        self.data_dict['acc'].append(logs.get('accuracy'))
         if self.hedge:
 
             M = sum(losses)

@@ -1,6 +1,7 @@
 import os, sys, getopt 
 import yaml
 import pickle
+import csv
 
 import numpy as np
 
@@ -101,13 +102,32 @@ def main(arg, idx=0):
     loss_weights = build_loss_weight(config)
     my_callback = MyCallback(loss_weights, names = out_name_loss, hedge = config['hedge'], log_name = config['log'])
     #csv  = CSVLogger(config['log'])
-    model.compile(optimizer = optim, loss = loss_dict, hedge = config['hedge'],loss_weights = loss_weights, metrics = ['accuracy'])
+    model.compile(optimizer = optim, loss = loss_dict,loss_weights = loss_weights, metrics = ['accuracy'])
     model.fit(in_dict, out_dict, nb_epoch = config['nb_epoch'], batch_size = config['batch_size'], callbacks=[my_callback])
-    cumLoss = np.cumsum(my_callback.acc)
-    indexOfLoss = np.arange(len(cumLoss))+1
-    cumAverageLoss = cumLoss/indexOfLoss
-    filename = (config['log'] + '_' + str(idx) + '.acc')
-    np.savetxt(filename, cumAverageLoss, delimiter=',')
+    #cumLoss = np.cumsum(my_callback.acc)
+    #indexOfLoss = np.arange(len(cumLoss))+1
+    #cumAverageLoss = cumLoss/indexOfLoss
+    #filename = (config['log'] + '_' + str(idx) + '.acc')
+    #np.savetxt(filename, cumAverageLoss, delimiter=',')
+
+    csv_file = "baseline_output.csv"
+    print("Saving results to CSV file...")
+
+    data_len = len(my_callback.data_dict['acc'])
+    try:
+        with open(csv_file, 'w', newline='') as f:
+            dict_keys = list(my_callback.data_dict.keys())
+            w = csv.DictWriter(f, dict_keys)
+            w.writeheader()
+
+            for i in range(0, data_len):
+                data_list = dict()
+                data_list['acc'] = my_callback.data_dict['acc'][i]
+                data_list['loss'] = my_callback.data_dict['loss'][i]
+
+                w.writerow(data_list)
+    except IOError:
+        print("I/O error")
     
     return my_callback
 if __name__ == '__main__':

@@ -23,7 +23,8 @@ def convert_npz_to_mat(npz_file, mat_file):
     random.shuffle(data_save)
     random.shuffle(label_save)
 
-    # todo - shuffle this.
+    # todo - switch this to pull random sampling for test data for cd1 and cd2.
+
     new_data['X_train'] = data_save[:train_length]
     new_data['Y_train'] = label_save[:train_length]
     new_data['X_test'] = data_save[train_length:]
