@@ -20,7 +20,7 @@ def get_data(config):
     elif config['data'] in ['cd3','cd4']:
         config['input_size'] = (25,)
     elif config['data'] in ['url']:
-        config['input_size'] = (3231961,)
+        config['input_size'] = (5000,)
     return config
 
 def build_model(config):
