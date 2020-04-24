@@ -5,6 +5,7 @@ import numpy as np
 import keras
 import keras.callbacks
 import csv
+import time
 from keras.datasets import mnist
 from keras.utils.vis_utils import plot_model
 from keras.models import Sequential, Model
@@ -12,6 +13,15 @@ from keras.optimizers import SGD, Adam, RMSprop
 from model import build_model, MyCallback
 from keras.callbacks import CSVLogger
 from data import load
+
+def secs_to_time(seconds):
+    seconds = seconds % (24 * 3600)
+    hour = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+    
+    return "%d:%02d:%02d" % (hour, minutes, seconds)
 
 def build_data_dict(in_name, out_name, in_data, out_data):
     in_dict = dict()
@@ -96,8 +106,12 @@ def main(arg, idx=0):
     loss_weights = build_loss_weight(config)
     my_callback = MyCallback(loss_weights, names = out_name_loss, hedge = config['hedge'], log_name = config['log'], acc_output_num = config['n_layers'])
 
+    start_time = time.time()
     model.compile(optimizer = optim, loss = loss_dict, loss_weights = loss_weights, metrics = ['acc'])
     model.fit(in_dict, out_dict, epochs = config['nb_epoch'], batch_size = config['batch_size'], callbacks=[my_callback]) #callbacks=[csv]) #
+    end_time = time.time()
+
+    test_time = end_time - start_time
     
     #cumLoss = np.cumsum(my_callback.acc)
     #indexOfLoss = np.arange(len(cumLoss))+1
@@ -109,6 +123,8 @@ def main(arg, idx=0):
     out_num = config['n_layers']
     csv_file = "model_acc.csv"
     print("Saving results to CSV file...")
+
+    print("Total testing time: ", secs_to_time(test_time))
 
     # Save dictionary to CSV file
     for i in range(0, out_num):

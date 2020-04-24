@@ -4,6 +4,7 @@ import pickle
 import csv
 
 import numpy as np
+import time
 
 import keras
 import keras.callbacks
@@ -14,6 +15,15 @@ from keras.optimizers import SGD, Adam, RMSprop
 from model import build_model, MyCallback
 from keras.callbacks import CSVLogger
 from data import load
+
+def secs_to_time(seconds):
+    seconds = seconds % (24 * 3600)
+    hour = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+
+    return "%d:%02d:%02d" % (hour, minutes, seconds)
 
 def build_data_dict(in_name, out_name, in_data, out_data):
     in_dict = dict()
@@ -102,8 +112,14 @@ def main(arg, idx=0):
     loss_weights = build_loss_weight(config)
     my_callback = MyCallback(loss_weights, names = out_name_loss, hedge = config['hedge'], log_name = config['log'])
     #csv  = CSVLogger(config['log'])
+
+    start_time = time.time()
     model.compile(optimizer = optim, loss = loss_dict,loss_weights = loss_weights, metrics = ['accuracy'])
     model.fit(in_dict, out_dict, nb_epoch = config['nb_epoch'], batch_size = config['batch_size'], callbacks=[my_callback])
+    end_time = time.time()
+
+    test_time = end_time - start_time
+
     #cumLoss = np.cumsum(my_callback.acc)
     #indexOfLoss = np.arange(len(cumLoss))+1
     #cumAverageLoss = cumLoss/indexOfLoss
@@ -112,6 +128,8 @@ def main(arg, idx=0):
 
     csv_file = "baseline_output.csv"
     print("Saving results to CSV file...")
+
+    print("Total testing time: ", secs_to_time(test_time))
 
     data_len = len(my_callback.data_dict['acc'])
     try:
