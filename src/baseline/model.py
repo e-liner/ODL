@@ -20,6 +20,8 @@ def get_data(config):
         config['input_size'] = (50,)
     elif config['data'] == 'cd3' or config['data'] == 'cd4':
         config['input_size'] = (25,)
+    elif config['data'] == 'ember':
+        config['input_size'] = (2381,)
     config['output_size'] = 2
     return config
 

@@ -21,6 +21,8 @@ def get_data(config):
         config['input_size'] = (25,)
     elif config['data'] in ['url']:
         config['input_size'] = (5000,)
+    elif config['data'] in ['ember']:
+        config['input_size'] = (2381,)
     return config
 
 def build_model(config):

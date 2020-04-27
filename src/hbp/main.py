@@ -6,6 +6,7 @@ import keras
 import keras.callbacks
 import csv
 import time
+import ember
 from keras.datasets import mnist
 from keras.utils.vis_utils import plot_model
 from keras.models import Sequential, Model
@@ -13,6 +14,8 @@ from keras.optimizers import SGD, Adam, RMSprop
 from model import build_model, MyCallback
 from keras.callbacks import CSVLogger
 from data import load
+
+ember_full_path = "D:/Users/eliner/eclipse-workspace/ODL/data/ember2018/"
 
 def secs_to_time(seconds):
     seconds = seconds % (24 * 3600)
@@ -29,6 +32,15 @@ def build_data_dict(in_name, out_name, in_data, out_data):
     
     out_dict = dict((k, out_data) for k in out_name)
     return (in_dict, out_dict)
+
+def convert_labels(in_arr, classes):
+    in_size = len(in_arr)
+    out_arr = np.zeros((in_size, classes))
+
+    for i in range(0, in_size):
+        out_arr[i][int(in_arr[i])] = 1
+
+    return out_arr
 
 def build_loss_weight(config):
     if config['hedge'] == False:
@@ -82,7 +94,15 @@ def main(arg, idx=0):
     for key,value in config.items():
         print("  ",key,": ",value)
 
-    (X_train, Y_train, X_test, Y_test, nb_classes) = load(config['data'])
+    if config['data'] == 'ember':
+        X_train, Y_train, X_test, Y_test = ember.read_vectorized_features(ember_full_path)
+
+        nb_classes = 2
+        Y_train = convert_labels(Y_train, nb_classes)
+        Y_test = convert_labels(Y_test, nb_classes)
+    else:
+        (X_train, Y_train, X_test, Y_test, nb_classes) = load(config['data'])
+
     '''
     X_train = X_train[:1000]
     Y_train = Y_train[:1000]
