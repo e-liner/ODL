@@ -23,8 +23,13 @@ def get_data(config):
         config['input_size'] = (5000,)
     elif config['data'] in ['ember']:
         config['input_size'] = (2381,)
-    elif config['data'] in ['kdd_2']:
+    elif config['data'] in ['kdd_2', 'kdd_40']:
         config['input_size'] = (41,)
+
+    if config['data'] == 'kdd_40':
+        config['output_size'] = 40
+    else:
+        config['output_size'] = 2
     return config
 
 def build_model(config):

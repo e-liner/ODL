@@ -41,8 +41,8 @@ def convert_data():
     ytrain_arr = xtrain_matrix[:,41]
     ytest_arr = xtest_matrix[:,41]
 
-    data['Y_train'] = convert_labels(ytrain_arr, 2)
-    data['Y_test'] = convert_labels(ytest_arr, 2)
+    data['Y_train'] = convert_labels(ytrain_arr, 40)
+    data['Y_test'] = convert_labels(ytest_arr, 40)
 
     sio.savemat(mat_path, mdict=data)
     return
@@ -255,81 +255,81 @@ def format_into_floats(file_path):
                     elif val == 'neptune':
                         current_data[i] = 1
                     elif val == 'warezclient':
-                        current_data[i] = 1
+                        current_data[i] = 2
                     elif val == 'ipsweep':
-                        current_data[i] = 1
+                        current_data[i] = 3
                     elif val == 'portsweep':
-                        current_data[i] = 1
+                        current_data[i] = 4
                     elif val == 'teardrop':
-                        current_data[i] = 1
+                        current_data[i] = 5
                     elif val == 'nmap':
-                        current_data[i] = 1
+                        current_data[i] = 6
                     elif val == 'satan':
-                        current_data[i] = 1
+                        current_data[i] = 7
                     elif val == 'smurf':
-                        current_data[i] = 1
+                        current_data[i] = 8
                     elif val == 'pod':
-                        current_data[i] = 1
+                        current_data[i] = 9
                     elif val == 'back':
-                        current_data[i] = 1
+                        current_data[i] = 10
                     elif val == 'guess_passwd':
-                        current_data[i] = 1
+                        current_data[i] = 11
                     elif val == 'ftp_write':
-                        current_data[i] = 1
+                        current_data[i] = 12
                     elif val == 'multihop':
-                        current_data[i] = 1
+                        current_data[i] = 13
                     elif val == 'rootkit':
-                        current_data[i] = 1
+                        current_data[i] = 14
                     elif val == 'buffer_overflow':
-                        current_data[i] = 1
+                        current_data[i] = 15
                     elif val == 'imap':
-                        current_data[i] = 1
+                        current_data[i] = 16
                     elif val == 'warezmaster':
-                        current_data[i] = 1
+                        current_data[i] = 17
                     elif val == 'phf':
-                        current_data[i] = 1
+                        current_data[i] = 18
                     elif val == 'land':
-                        current_data[i] = 1
+                        current_data[i] = 19
                     elif val == 'loadmodule':
-                        current_data[i] = 1
+                        current_data[i] = 20
                     elif val == 'spy':
-                        current_data[i] = 1
+                        current_data[i] = 21
                     elif val == 'perl':
-                        current_data[i] = 1
+                        current_data[i] = 22
                     elif val == 'saint':
-                        current_data[i] = 1
+                        current_data[i] = 23
                     elif val == 'mscan':
-                        current_data[i] = 1
+                        current_data[i] = 24
                     elif val == 'apache2':
-                        current_data[i] = 1
+                        current_data[i] = 25
                     elif val == 'snmpgetattack':
-                        current_data[i] = 1
+                        current_data[i] = 26
                     elif val == 'processtable':
-                        current_data[i] = 1
+                        current_data[i] = 27
                     elif val == 'httptunnel':
-                        current_data[i] = 1
+                        current_data[i] = 28
                     elif val == 'ps':
-                        current_data[i] = 1
+                        current_data[i] = 29
                     elif val == 'snmpguess':
-                        current_data[i] = 1
+                        current_data[i] = 30
                     elif val == 'mailbomb':
-                        current_data[i] = 1
+                        current_data[i] = 31
                     elif val == 'named':
-                        current_data[i] = 1
+                        current_data[i] = 32
                     elif val == 'sendmail':
-                        current_data[i] = 1
+                        current_data[i] = 33
                     elif val == 'xterm':
-                        current_data[i] = 1
+                        current_data[i] = 34
                     elif val == 'worm':
-                        current_data[i] = 1
+                        current_data[i] = 35
                     elif val == 'xlock':
-                        current_data[i] = 1
+                        current_data[i] = 36
                     elif val == 'xsnoop':
-                        current_data[i] = 1
+                        current_data[i] = 37
                     elif val == 'sqlattack':
-                        current_data[i] = 1
+                        current_data[i] = 38
                     elif val == 'udpstorm':
-                        current_data[i] = 1
+                        current_data[i] = 39
                     else:
                         print("eliner, found unknown val", i, val)
                         exit()

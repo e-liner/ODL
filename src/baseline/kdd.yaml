@@ -9,7 +9,7 @@ hidden_num: 100
 activation: relu 
 loss_weight: ave
 adaptive_weight: False
-data: kdd_2
+data: kdd_40
 hedge: False
 model: MLP
 input_size: 28
