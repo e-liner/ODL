@@ -35,7 +35,7 @@ def build_data_dict(in_name, out_name, in_data, out_data):
 
 def convert_labels(in_arr, classes):
     in_size = len(in_arr)
-    out_arr = np.zeros((in_size, classes))
+    out_arr = np.zeros((in_size, classes), dtype=np.uint8)
 
     for i in range(0, in_size):
         out_arr[i][int(in_arr[i])] = 1

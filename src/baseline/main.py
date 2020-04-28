@@ -37,7 +37,7 @@ def build_data_dict(in_name, out_name, in_data, out_data):
 
 def convert_labels(in_arr, classes):
     in_size = len(in_arr)
-    out_arr = np.zeros((in_size, classes))
+    out_arr = np.zeros((in_size, classes), dtype=np.uint8)
 
     for i in range(0, in_size):
         out_arr[i][int(in_arr[i])] = 1
@@ -107,6 +107,17 @@ def main(arg, idx=0):
         Y_test = convert_labels(Y_test, nb_classes)
     else:
         (X_train, Y_train, X_test, Y_test, nb_classes) = load(config['data'])
+
+    """
+    # Type testing
+    first_sample = Y_train[0]
+    ef = open("testing_out.txt", 'w')
+    for e in range(0, len(first_sample)):
+        ef.write(str(Y_train[0][e]))
+        ef.write(str(type(Y_train[0][e])))
+        ef.write("\n")
+    ef.close()
+    """
 
     '''
     X_train = X_train[:1000]

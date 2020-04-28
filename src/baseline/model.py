@@ -22,6 +22,8 @@ def get_data(config):
         config['input_size'] = (25,)
     elif config['data'] == 'ember':
         config['input_size'] = (2381,)
+    elif config['data'] == 'kdd_2':
+        config['input_size'] = (41,)
     config['output_size'] = 2
     return config
 
