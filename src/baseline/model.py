@@ -24,6 +24,8 @@ def get_data(config):
         config['input_size'] = (2381,)
     elif config['data'] == 'kdd_2' or config['data'] == 'kdd_40':
         config['input_size'] = (41,)
+    elif config['data'] == 'mb_sites':
+        config['input_size'] = (39,)
 
     if config['data'] == 'kdd_40':
         config['output_size'] = 40
