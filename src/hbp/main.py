@@ -104,11 +104,11 @@ def main(arg, idx=0):
         (X_train, Y_train, X_test, Y_test, nb_classes) = load(config['data'])
 
     '''
-    X_train = X_train[:1000]
-    Y_train = Y_train[:1000]
-    X_test = X_test[:1000]
-    Y_test = Y_test[:1000]
-    '''
+    X_train = X_train[:200000]
+    Y_train = Y_train[:200000]
+    #X_test = X_test[:1000]
+    #Y_test = Y_test[:1000]
+    #'''
     model, in_name, out_name = build_model(config)
     if len(out_name) == 1:
         out_name_loss = ['loss']
@@ -121,7 +121,8 @@ def main(arg, idx=0):
     optim = eval(config['optim'])(lr = config['learning_rate'])
     in_dict, out_dict = build_data_dict(in_name, out_name, X_train, Y_train)
     in_val, out_val = build_data_dict(in_name, out_name, X_test, Y_test)
-    loss_dict = dict((k, 'categorical_crossentropy') for k in out_name)
+    loss_dict = dict((k, 'huber_loss') for k in out_name) 
+
 
     loss_weights = build_loss_weight(config)
     my_callback = MyCallback(loss_weights, names = out_name_loss, hedge = config['hedge'], log_name = config['log'], acc_output_num = config['n_layers'])

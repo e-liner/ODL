@@ -7,7 +7,7 @@ from keras.utils import np_utils
 from keras import backend as K
 
 def load(dataset):
-    assert dataset in ['higgs', 'cd1','cd2','cd3','cd4','cd5','cd6','cd7','syn8','susy', 'url', 'kdd_2', 'kdd_40']
+    assert dataset in ['higgs', 'cd1','cd2','cd3','cd4','cd5','cd6','cd7','syn8','susy', 'url', 'kdd_2', 'kdd_40', 'mb_sites']
     data = loadmat('../../data/' + dataset + '.mat')
     X_train = data['X_train']
     X_test = data['X_test']
