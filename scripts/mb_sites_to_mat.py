@@ -68,6 +68,8 @@ def convert_labels(in_arr, classes):
 
 def format_into_ints(filename):
     data = []
+    benign_count = 0
+    mal_count = 0
     with open(filename, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         keys = reader.fieldnames
@@ -129,12 +131,15 @@ def format_into_ints(filename):
             
             if row['TIPO'] == 'Maligna':
                 current_data[39] = 1
+                mal_count = mal_count + 1
             elif row['TIPO'] == 'Benigna':
                 current_data[39] = 0
+                benign_count = benign_count + 1
 
             #print(current_data)
             data.append(current_data)
 
+    print("Data Analysis:", benign_count, "Benign Entries and ", mal_count, "Malicious Entries")
     return data
 
 
